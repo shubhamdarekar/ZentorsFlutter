@@ -41,5 +41,22 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>com.googleusercontent.apps.907414218364-r7ar8q4qvhbkorc5mr1tsm1s4qhjna0o</string>
+		</array>
+	</dict>
+</array>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Choose Image From Gallery</string>
+<key>NSCameraUsageDescription</key>
+<string>Choose Image From Gallery</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Choose Image From Gallery</string>
 </dict>
 </plist>

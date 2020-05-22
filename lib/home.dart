@@ -1,13 +1,22 @@
-import 'package:Zentors/Providers/AuthService.dart';
-import 'package:Zentors/loginSignup/auth.dart';
+import 'package:Zentors/Appointments.dart';
+import 'package:Zentors/loginSignup/details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   final FirebaseUser user;
   // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final Firestore _store = Firestore.instance;
+
+  Future<bool> _getSignup() async {
+    bool signup;
+    await _store.collection('users').document(user.uid).get().then((value) {
+      signup = value.data['signup'];
+    });
+    return signup;
+  }
 
   HomePage({Key key, @required this.user})
       : assert(user != null),
@@ -15,36 +24,21 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(bottomNavigationBar:new BottomNavigationBar(items: [ BottomNavigationBarItem(title: Text("Appointments"),icon:Icon(
-      Icons.audiotrack,
-      color: Colors.green,
-      size: 30.0,
-    )),BottomNavigationBarItem(title: Text("Appointments"),icon:Icon(
-      Icons.golf_course,
-      color: Colors.red,
-      size: 30.0,
-    ))]),
-      drawer: new Drawer(),
-      body: Column(
-        children: <Widget>[
-          RaisedButton(
-            child: Text("Sign out"),
-            onPressed: () async  {
-              await Provider.of<AuthService>(context,listen: false).logout();
-              // _firebaseAuth.currentUser().then((value) => print(value));
-            },
-          ),
-          Center(
-            child: Text(user.toString()),
-          ),
-          RaisedButton(
-            child: Text("Test"),
-            onPressed: () async  {
-              print(Navigator.push(context, CupertinoPageRoute(builder: (context) => AuthScreen(),)));
-            },
-          ),
-        ],
-      ),
-    );
+    _getSignup().then((value) {
+      if (value) {
+        showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => StatefulBuilder(
+                    builder: (BuildContext context, StateSetter state) {
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: Details(),
+                  );
+                }));
+      }
+    });
+    return Appointments();
   }
 }

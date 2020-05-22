@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final Firestore _store = Firestore.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<FirebaseUser> getUser() async {
@@ -23,6 +25,7 @@ class AuthService with ChangeNotifier {
 
   Future<FirebaseUser> loginUser(
       {String verificationId, String pin, BuildContext context}) async {
+        AuthResult authResult;
     if (verificationId != '') {
       AuthCredential _authCredential = PhoneAuthProvider.getCredential(
           verificationId: verificationId, smsCode: pin);
@@ -32,8 +35,28 @@ class AuthService with ChangeNotifier {
           .then((AuthResult value) {
         if (value.user != null) {
           // Handle loogged in state
-          notifyListeners();
+          authResult = value;
           Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+
+          if(authResult.additionalUserInfo.isNewUser){
+      _store.collection('users').document(authResult.user.uid).setData({
+                    "phone": authResult.user.phoneNumber,
+                    "gmail": authResult.user.email,
+                    "profile_picture": authResult.user.photoUrl,
+                    "signup": true,
+                    "role": 0,
+                    "created_at": new DateTime.now().millisecondsSinceEpoch
+                });
+
+      _store.collection('users').document(authResult.user.uid).collection('recentMessages')
+      .document('sort').setData({
+        "myArr":[]
+      });
+    }else{
+      _store.collection('users').document(authResult.user.uid).updateData({
+        "last_logged_in": new DateTime.now().millisecondsSinceEpoch
+      });
+    }
         } else {
           showToast("Error validating OTP, try again", Colors.red);
         }
@@ -51,7 +74,7 @@ class AuthService with ChangeNotifier {
         idToken: googleSignInAuthentication.idToken,
       );
 
-      final AuthResult authResult =
+      authResult =
           await _auth.signInWithCredential(credential);
           Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
       final FirebaseUser user = authResult.user;
@@ -61,8 +84,32 @@ class AuthService with ChangeNotifier {
 
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
+
+      if(authResult.additionalUserInfo.isNewUser){
+      _store.collection('users').document(authResult.user.uid).setData({
+                                "gmail": authResult.user.email,
+                                "profile_picture": authResult.additionalUserInfo.profile['picture'],
+                                "locale": authResult.additionalUserInfo.profile['locale'],
+                                "first_name": authResult.additionalUserInfo.profile['given_name'],
+                                "family_name": authResult.additionalUserInfo.profile['family_name'],
+                                "signup": true,
+                                "role": 0,
+                                "created_at": new DateTime.now().millisecondsSinceEpoch
+                            });
+
+      _store.collection('users').document(authResult.user.uid).collection('recentMessages')
+      .document('sort').setData({
+        "myArr":[]
+      });
+    }else{
+      _store.collection('users').document(authResult.user.uid).updateData({
+        "last_logged_in": new DateTime.now().millisecondsSinceEpoch
+      });
+    }
     }
     notifyListeners();
+    
+    print(authResult);
     return _auth.currentUser();
   }
 

@@ -32,10 +32,10 @@
               "client_type": 3
             },
             {
-              "client_id": "907414218364-j9loh2sb7buvllmrnfkq2gjc58s4nos2.apps.googleusercontent.com",
+              "client_id": "907414218364-r7ar8q4qvhbkorc5mr1tsm1s4qhjna0o.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "host.exp.exponent"
+                "bundle_id": "com.zentors.Zentors"
               }
             }
           ]
@@ -50,6 +50,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "907414218364-gi5l98k5sfq24ljq8mtmocm68tgdaenm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zentors.Zentors",
+            "certificate_hash": "067b014ab5316d6278b832cff09c150528271899"
+          }
+        },
         {
           "client_id": "907414218364-vber63um5m6f4t1epjkqqe653a7m1m5p.apps.googleusercontent.com",
           "client_type": 1,
@@ -76,10 +84,10 @@
               "client_type": 3
             },
             {
-              "client_id": "907414218364-j9loh2sb7buvllmrnfkq2gjc58s4nos2.apps.googleusercontent.com",
+              "client_id": "907414218364-r7ar8q4qvhbkorc5mr1tsm1s4qhjna0o.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "host.exp.exponent"
+                "bundle_id": "com.zentors.Zentors"
               }
             }
           ]
