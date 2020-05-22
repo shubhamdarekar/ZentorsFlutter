@@ -9,9 +9,11 @@ import './otp_input.dart';
 
 class OTPScreen extends StatefulWidget {
   final String mobileNumber;
+  final bool isLinking;
   OTPScreen({
     Key key,
     @required this.mobileNumber,
+    this.isLinking
   })  : assert(mobileNumber != null),
         super(key: key);
 
@@ -215,7 +217,11 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   Future<void> _onFormSubmitted() async {
+    if(widget.isLinking!=null){
+    await Provider.of<AuthService>(context,listen: false).linkPhone(pin: _pinEditingController.text,verificationId: _verificationId,context:context);
+    }else{
     await Provider.of<AuthService>(context,listen: false).loginUser(pin: _pinEditingController.text,verificationId: _verificationId,context:context);
+    }
     return;
     
     
